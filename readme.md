@@ -1,77 +1,131 @@
 
----
+# Doc-Driven API Testability Filtering Protocol
 
-# Stage1: API Auto-Discovery & Testability Filtering Guidelines 
-
-This document describes how to automatically identify *testable APIs* from any software library **without relying on a predefined API list (txt)**.
-The purpose is to discover APIs that are suitable for automated input generation and execution-based testing.
+This document defines a strict rule-based decision workflow for determining whether an API is **testable** based **solely on documentation content** (e.g., Python `__doc__` or official documentation text).  
+No runtime execution, signature inspection, or external metadata is required.
 
 ---
 
-## **1. Objective**
+## Step 1 — Documentation Availability Check
 
-Automatically extract and filter APIs from a target library, and produce a list of **testable APIs** based on predefined criteria regarding **callability, input constructability, safety, determinism, and executability**.
+**Rule 1.1 — Reject immediately if:**
+- The doc is missing, empty, placeholder-like, or contains no usable semantics  
+  (e.g., only `...`, `pass`, a single vague sentence, or copy-pasted template text).
 
----
-
-## **2. Entry Condition**
-
-The process begins with **a reference to a target library module**, e.g.:
-
-* A dynamic import (e.g., `import torch`)
-* A loaded namespace 
-* A root object (e.g., `cv2`, `np`, `tf`, `jax.numpy`)
-
-No API list, documentation file, or index text is required.
+**If doc is readable and meaningful → Continue.**
 
 ---
 
-## **3. High-Level Procedure**
+## Step 2 — Input Parameter Validity Check
 
-1. **Discover APIs automatically** by recursively exploring attributes in the target module.
-2. **Identify callable symbols** that represent executable functional behavior.
-3. **Extract minimal behavioral and parameter information** (e.g., name, signature, docs if available).
-4. **Evaluate testability** according to standardized rules.
-5. **Record testable APIs** and log reasons for exclusions.
-6. **Export two final lists** for downstream test input generation.
+Documentation must clearly describe function parameters.
 
----
+**Reject if:**
+- No parameter description is present.
+- All parameters are optional and no required input is documented.
+- Parameter descriptions are too vague to infer type or usage  
+  (e.g., "some object", "anything", "data structure", "stuff").
 
-## **4. Inclusion Criteria (Must Satisfy All)**
-
-An API is **testable** only if it meets **all** of the following conditions:
-
-| Category                 | Requirement                                                                                   |
-| ------------------------ | --------------------------------------------------------------------------------------------- |
-| Callable                 | Must be a callable function, method, or operator                                              |
-| Has Inputs               | Must require **one or more user-provided input parameters**                                   |
-| Constructible Parameters | Inputs must be programmatically constructible (e.g., numbers, arrays, tensors, tuples, bools) |
-| Self-contained           | Executable without I/O, external resources, user interaction, or environment configuration    |
-| Deterministic            | Does not depend on global states, external devices, runtime sessions, or unstable randomness  |
-| Safe to execute          | Expected to run within bounded time and resource consumption                                  |
+**Proceed only if:**  
+At least one **required** and **documented** input parameter exists.
 
 ---
 
-## **5. Exclusion Criteria (Any Match → Disqualified)**
+## Step 3 — Constructible Input Type Check
 
-| Type                                | Description                                                | Examples                                   |
-| ----------------------------------- | ---------------------------------------------------------- | ------------------------------------------ |
-| Not callable                        | Pure objects, constants, modules                           | `np.pi`, `tf.float32`                      |
-| No input required                   | Zero-argument APIs                                         | `tf.random.set_seed()`, deprecated helpers |
-| I/O or resource binding             | File, network, device, camera, database, GPU/TPU           | `cv2.VideoCapture`, `tf.io.read_file`      |
-| Training / Optimization / Lifecycle | Stateful behavior, long loops, model fitting               | `model.fit`, `optimizer.step`              |
-| Context / Scope management          | Session, tracing, compiling, gradient recording            | `tf.GradientTape`, `jax.jit`               |
-| Uncontrollable randomness           | Non-seedable stochastic execution                          | remote sampling                            |
-| Unbounded complexity                | Compilation, graph building, full training, big transforms | lazy eval, meta-ops                        |
-| Runtime side effects                | Mutates global states or environment                       | env setters                                |
-| Overloaded constructors             | Classes, layers, estimators                                | `torch.nn.Conv2d`, `tf.keras.Model`        |
-| Operator wrappers                   | Raw / low-level / IR bound                                 | `tf.raw_ops.*`                             |
+Each required parameter must have a type that can be **programmatically constructed** without external resources.
+
+**Allowed (constructible) input types include:**
+```
+
+int, float, bool, string, tuple, list, array, tensor, ndarray, numeric types
+
+```
+
+**Reject if any required parameter type falls into non-constructible categories, including:**
+```
+
+file path, URL, network resource, hardware device, session object,
+model instance, graph handle, context manager, stream, iterator,
+callback, opaque handle, environment object
+
+```
+
+If all required parameters are constructible → Continue.
 
 ---
 
-## **6. Output Format**
+## Step 4 — Side Effects and External Dependency Check
 
-Refer to the txt file under doc2info/ .
+Scan documentation for any indication of side effects or external dependency.
 
+**Reject immediately if documentation mentions or implies any of the following:**
 
+| Category | Disqualifying keywords or patterns |
+|----------|------------------------------------|
+| I/O | file, save, load, write, read, open, download |
+| Hardware / devices | camera, microphone, GPU, TPU, device handle |
+| Execution context | session, scope, global, attach, register |
+| Training / lifecycle | train, fit, learn, optimizer, backward, checkpoint |
+| Distributed / remote | cluster, server, worker, RPC, remote execution |
+| Asynchronous / event-driven | callback, hook, listener, subscribe |
+
+If no such signals are found → Continue.
+
+---
+
+## Step 5 — Explicit Return Value Check
+
+Documentation must identify **a meaningful and capturable return value**.
+
+**Reject if:**
+- No return description is provided.
+- Return value is described only as a side effect (e.g., in-place modification).
+- Return behavior is unclear or unspecified.
+- Output depends on volatile global state.
+
+**Proceed only if documentation states or implies a return value that is data-form, e.g.:**
+```
+
+returns a tensor
+returns an ndarray
+returns a numeric value
+returns (value, index)
+
+```
+
+---
+
+## Step 6 — Final Decision
+
+| Outcome | Condition |
+|---------|-----------|
+| **TESTABLE** | All steps (1–5) passed |
+| **NOT TESTABLE** | Any step fails |
+| **UNCERTAIN** | Information insufficient for a confident decision |
+
+---
+
+## Required Output Files
+
+| File | Description |
+|-------|-------------|
+| `testable_apis.txt` | API names classified as TESTABLE |
+| `non_testable_apis.txt` | API names + failed rule indicators |
+| `uncertain_apis.txt` | API names lacking sufficient documentation clarity |
+
+---
+
+## Example Classification Results
+
+| API | Result | Reason |
+|------|---------|---------|
+| `tf.abs` | TESTABLE | Constructible numeric/tensor input + clear return |
+| `cv2.VideoCapture` | NOT TESTABLE | Requires camera hardware (Rule 4) |
+| `jax.grad` | NOT TESTABLE | Input must be function closure (Rule 3) |
+
+---
+```
+
+---
 
