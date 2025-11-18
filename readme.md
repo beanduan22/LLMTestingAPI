@@ -1,7 +1,7 @@
 
 ---
 
-# ** API Auto-Discovery & Testability Filtering Guidelines **
+# API Auto-Discovery & Testability Filtering Guidelines 
 
 This document describes how to automatically identify *testable APIs* from any software library **without relying on a predefined API list (txt)**.
 The purpose is to discover APIs that are suitable for automated input generation and execution-based testing.
