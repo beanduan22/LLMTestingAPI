@@ -96,6 +96,7 @@ returns (value, index)
 
 ---
 
+
 ## Step 6 — Final Decision
 
 | Outcome | Condition |
@@ -106,26 +107,24 @@ returns (value, index)
 
 ---
 
-## Required Output Files
+## Output Format
+
+Only APIs classified as **TESTABLE** will be written to an output text file.
 
 | File | Description |
 |-------|-------------|
-| `testable_apis.txt` | API names classified as TESTABLE |
-| `non_testable_apis.txt` | API names + failed rule indicators |
-| `uncertain_apis.txt` | API names lacking sufficient documentation clarity |
+| `testable_apis.txt` | Contains only the full names of APIs classified as TESTABLE (one per line) |
 
----
+Example content of `testable_apis.txt`:
+```
 
-## Example Classification Results
+tf.abs
+tf.math.log
+cv2.GaussianBlur
 
-| API | Result | Reason |
-|------|---------|---------|
-| `tf.abs` | TESTABLE | Constructible numeric/tensor input + clear return |
-| `cv2.VideoCapture` | NOT TESTABLE | Requires camera hardware (Rule 4) |
-| `jax.grad` | NOT TESTABLE | Input must be function closure (Rule 3) |
-
----
+```
 ```
 
 ---
+
 
