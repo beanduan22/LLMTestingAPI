@@ -26,12 +26,12 @@ The pipeline currently targets the following major libraries:
 
 ## Pipeline Stages Overview
 
-| Stage | Name | Purpose | Output |
+| readme | Name | Purpose | Output |
 |--------|----------------------------|--------------------------------------------------------------|-----------------------------|
 | **1** | API Auto-Discovery & Testability Filtering | Automatically locate and filter APIs using documentation rules | `testable_apis.csv/.xlsx` |
 | **2** | LLM-Based Doc → JSON Conversion | Convert API docs into structured JSON specs | `json_specs/*.json` |
 | **3** | Specification Parsing & Mutation Init | Build executable input templates & mutation constraints | `runtime_api_objects/*` |
-| (Future 4) | Test Case Generation & Execution | Execute API test suites (mutation or search-based) | coverage & anomaly results |
+| **4** | Test Case Generation & Execution | Execute API test suites (mutation or search-based) | coverage & anomaly results |
 
 ---
 
@@ -39,7 +39,7 @@ The pipeline currently targets the following major libraries:
 
 Follow the pipeline **in order**.
 
-### ✔ Step 1 — Run Stage 1 (MUST DO FIRST)
+### ✔ Step 1 — Run readme 1 (MUST DO FIRST)
 
 You will automatically:
 
@@ -64,7 +64,7 @@ Columns:
 
 ---
 
-### ✔ Step 2 — Run Stage 2
+### ✔ Step 2 — Run readme 2
 
 - Read `testable_apis.csv` / `.xlsx`
 - Call LLM per API using the predefined prompt
@@ -80,7 +80,7 @@ doc2info/json_specs/*.json
 
 ---
 
-### ✔ Step 3 — Run Stage 3
+### ✔ Step 3 — Run readme 3
 
 - Read all `.json` specs
 - Parse into executable internal structures
