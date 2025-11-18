@@ -17,7 +17,7 @@ doc2info/json_specs/*.json
 
 ```
 
-Each file represents a single API and follows the predefined schema.
+Each file represents a single or a list API and follows the predefined schema.
 
 ---
 
