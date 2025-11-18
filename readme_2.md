@@ -44,7 +44,7 @@ Each API will generate **one standalone `.json` file**, named using:
 
 ```
 
-Example:
+Example (or directly input into one json file):
 
 ```
 
