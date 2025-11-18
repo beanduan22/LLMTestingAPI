@@ -123,15 +123,9 @@ tf.io.read_file             # file I/O
 
 ---
 
-## **9. Intended Downstream Usage**
+## **9. Output**
 
-The resulting list from this filtering step can be safely used for:
-
-* Example-based test case generation
-* Mutation-based fuzzing
-* Parameterized input search
-* LLM-driven test creation
-* Cross-framework equivalence testing
+Refer to the txt file under doc2info/ .
 
 ---
 
