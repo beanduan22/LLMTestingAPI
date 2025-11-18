@@ -96,7 +96,6 @@ returns (value, index)
 
 ---
 
-
 ## Step 6 — Final Decision
 
 | Outcome | Condition |
@@ -109,20 +108,30 @@ returns (value, index)
 
 ## Output Format
 
-Only APIs classified as **TESTABLE** will be written to an output text file.
+Only APIs classified as **TESTABLE** will be saved into a structured tabular file (CSV or Excel).
 
 | File | Description |
 |-------|-------------|
-| `testable_apis.txt` | Contains only the full names of APIs classified as TESTABLE (one per line) |
+| `testable_apis.csv` or `testable_apis.xlsx` | Contains TESTABLE APIs and their associated documentation content |
 
-Example content of `doc2info/tf_valid_apis.txt`:
+### Table Format
+
+| Column | Description |
+|--------|-------------|
+| `api_full_name` | The full qualified name of the API (e.g., `tf.math.abs`) |
+| `api_doc_text` | The extracted documentation content (`__doc__` or official doc text) |
+
+### Example content (`testable_apis.csv`):
+
+| api_full_name | api_doc_text |
+|----------------|--------------|
+| tf.abs | Applies the abs function element-wise on a tensor... |
+| tf.math.log | Computes natural logarithm of x element-wise... |
+| ... | ... |
+
 ```
 
-tf.abs
-tf.math.log
-...
 
-```
 
 
 
