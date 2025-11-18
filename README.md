@@ -1,8 +1,4 @@
-下面是**总的 README（英文、Markdown，可直接使用）**，整合你目前的三阶段设计，并指示用户首先执行 **Stage 1** 来获取可测试 API。已包含主流深度学习库列表，也为未来扩展预留空间。
 
----
-
-```markdown
 # Automated API Test Generation Pipeline (DL Library Oriented)
 
 This repository describes a multi-stage automated pipeline designed to:
