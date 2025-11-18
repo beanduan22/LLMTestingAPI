@@ -1,7 +1,7 @@
 
 # Doc-Driven API Testability Filtering Protocol
 
-This document defines a strict rule-based decision workflow for determining whether an API is **testable** based **solely on documentation content** (e.g., Python `__doc__` or official documentation text).  
+This document defines a strict rule-based decision workflow for determining whether an API is **testable** based **solely on documentation content** (Python `__doc__`).  
 No runtime execution, signature inspection, or external metadata is required.
 
 ---
