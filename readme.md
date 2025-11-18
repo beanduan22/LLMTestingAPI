@@ -19,7 +19,7 @@ Automatically extract and filter APIs from a target library, and produce a list 
 The process begins with **a reference to a target library module**, e.g.:
 
 * A dynamic import (e.g., `import torch`)
-* A loaded namespace (e.g., passed from plugin system)
+* A loaded namespace 
 * A root object (e.g., `cv2`, `np`, `tf`, `jax.numpy`)
 
 No API list, documentation file, or index text is required.
@@ -69,64 +69,9 @@ An API is **testable** only if it meets **all** of the following conditions:
 
 ---
 
-## **6. Required API Information for Downstream Usage**
-
-For every **accepted** API, the following must be recorded:
-
-| Field                     | Description                             |
-| ------------------------- | --------------------------------------- |
-| Fully qualified name      | `module.submodule.function`             |
-| Parameter list            | Names, kinds, default availability      |
-| Minimal usage expectation | Data-driven rather than resource-driven |
-
----
-
-## **7. Output Format**
-
-Two plain-text output files must be produced:
-
-```
-testable_apis.txt
-non_testable_apis.txt
-```
-
-### `testable_apis.txt` contains only fully accepted APIs
-
-Example:
-
-```
-tf.math.abs
-torch.add
-numpy.reshape
-cv2.GaussianBlur
-```
-
-### `non_testable_apis.txt` must include exclusion reason
-
-Example:
-
-```
-tf.random.set_seed          # no required input
-cv2.VideoCapture            # hardware resource required
-torch.optim.Adam            # lifecycle/training object
-jax.grad                    # requires function closure
-tf.io.read_file             # file I/O
-```
-
----
-
-## **8. Notes & Clarifications**
-
-* APIs with **optional parameters but no required parameters** are still excluded because **test generation requires at least one constructible input**.
-* Constructors (`ClassName(...)`) are excluded in favor of **functional counterparts**, if available.
-* If type information is ambiguous, **assume non-testable** unless validated in a controlled environment.
-
----
-
-## **9. Output**
+## **6. Output Format**
 
 Refer to the txt file under doc2info/ .
 
----
 
 
