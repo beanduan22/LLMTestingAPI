@@ -115,16 +115,14 @@ Only APIs classified as **TESTABLE** will be written to an output text file.
 |-------|-------------|
 | `testable_apis.txt` | Contains only the full names of APIs classified as TESTABLE (one per line) |
 
-Example content of `testable_apis.txt`:
+Example content of `doc2info/tf_valid_apis.txt`:
 ```
 
 tf.abs
 tf.math.log
-cv2.GaussianBlur
+...
 
 ```
-```
 
----
 
 
